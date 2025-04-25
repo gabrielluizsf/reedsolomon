@@ -1,0 +1,36 @@
+package reedsolomon
+
+import (
+	"testing"
+
+	"github.com/i9si-sistemas/assert"
+	"github.com/i9si-sistemas/bitset"
+)
+
+func TestEncode(t *testing.T) {
+	var tests = []struct {
+		numECBytes int
+		data       string
+		rsCode     string
+	}{
+		{
+			5,
+			"01000000 00011000 10101100 11000011 00000000",
+			"01000000 00011000 10101100 11000011 00000000 10000110 00001101 00100010 10101110 00110000",
+		},
+		{
+			10,
+			"00010000 00100000 00001100 01010110 01100001 10000000 11101100 00010001 11101100 00010001 11101100 00010001 11101100 00010001 11101100 00010001",
+			"00010000 00100000 00001100 01010110 01100001 10000000 11101100 00010001 11101100 00010001 11101100 00010001 11101100 00010001 11101100 00010001 10100101 00100100 11010100 11000001 11101101 00110110 11000111 10000111 00101100 01010101",
+		},
+	}
+
+	for _, test := range tests {
+		data := bitset.NewFromBase2String(test.data)
+		rsCode := bitset.NewFromBase2String(test.rsCode)
+
+		result := Encode(data, test.numECBytes)
+
+		assert.True(t, rsCode.Equals(result))
+	}
+}
